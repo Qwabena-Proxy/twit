@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+    {% block nav %}
+        {% if user.is_authenticated%}
+            {% include 'profilenavbar.html' %}
+        {% else %}
+            {% include 'navbar.html' %}
+        {% endif %}
+    {% endblock %}
+    {% block content %}
+    <div class="grid grid-cols-3 gap-3">
+        <div class="col-span-2">
+            <h1 class="text-xl text-center font-bold text-gray-800">TwiTTs</h1>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if user.is_authenticated %}
+                        <div class="msg">
+                            <div role="alert" id="alert" class="alert alert-success bg-green-600 bg-opacity-30 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" id="closebtn" class="stroke-current shrink-0 h-10 w-10" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>{{message}}</span>
+                            </div>
+                        </div>
+                    {% else%}
+                        <div class="msg">
+                            <div role="alert" id="alert" class="alert alert-error bg-red-600 bg-opacity-30 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" id="closebtn" class="stroke-current shrink-0 h-10 w-10" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>{{message}}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <br>
+            {% for twit in twits %}
+                <ul role="list" class="p-4 rounded-lg border border-gray-300 inline-block max-w-full mb-2">
+                    <li class="flex py-4 first:pt-0 last:pb-0 ">
+                        <figure><svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                            width="40px" height="40px" viewBox="0 0 45.532 45.532"
+                            xml:space="preserve">
+                    <g>
+                        <path d="M22.766,0.001C10.194,0.001,0,10.193,0,22.766s10.193,22.765,22.766,22.765c12.574,0,22.766-10.192,22.766-22.765
+                            S35.34,0.001,22.766,0.001z M22.766,6.808c4.16,0,7.531,3.372,7.531,7.53c0,4.159-3.371,7.53-7.531,7.53
+                            c-4.158,0-7.529-3.371-7.529-7.53C15.237,10.18,18.608,6.808,22.766,6.808z M22.761,39.579c-4.149,0-7.949-1.511-10.88-4.012
+                            c-0.714-0.609-1.126-1.502-1.126-2.439c0-4.217,3.413-7.592,7.631-7.592h8.762c4.219,0,7.619,3.375,7.619,7.592
+                            c0,0.938-0.41,1.829-1.125,2.438C30.712,38.068,26.911,39.579,22.761,39.579z"/>
+                    </g>
+                    </svg></figure>
+                        <div class="ml-3 overflow-hidden">
+                        <p class="text-sm font-medium text-slate-900"> <a href="{% url 'profile' twit.user %}" class="link link-info">@{{twit.user|lower}}</a>  {{twit.twit_date}}</p>
+                        <h1 class="font-normal ">{{twit.body}}</h1>
+                        </div>
+                    </li>
+                </ul>
+            <br>
+            {% endfor %}
+        </div>
+        <div>
+            <br><br>
+            {% if form %}
+                <form id="feedbackForm" method="POST">
+                    {% csrf_token%}
+                    <div class="relative w-full mb-3">
+                            {{form.as_p}}
+                            <!-- <textarea maxlength="300" name="feedback" id="feedback" rows="15" cols="80" class="border-0 px-3 py-3 bg-gray-300 placeholder-black text-gray-800 rounded text-sm shadow focus:outline-none w-full" placeholder="Enter your twits here.." required></textarea> -->
+                        </div>
+                        <div class="text-center mt-6">
+                            <button id="feedbackBtn" class="bg-gray-900 text-white text-center mx-auto hover:bg-gray-800 text-sm font-bold lowercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1" type="submit" style="transition: all 0.15s ease 0s;">Twit
+                            </button>
+                        </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endblock %}

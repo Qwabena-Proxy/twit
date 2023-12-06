@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block nav %}
+  {% include 'profilenavbar.html' %}
+{% endblock %}
+{% block content %}
+{% if user_profile%}
+    <div class="grid grid-cols-3 gap-3">
+        <div class="p-4 col-span-2">
+            <h1 class="text-xl font-bold text-gray-800">{{user_profile.user.username}}'s Profile</h1>
+            <br>
+            {% if mytwits %}
+                {% for twit in mytwits %}
+                    <ul role="list" class="p-4 rounded-lg border border-gray-300 max-w-fit mb-2">
+                        <li class="flex py-4 first:pt-0 last:pb-0 ">
+                            <figure><svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                width="40px" height="40px" viewBox="0 0 45.532 45.532"
+                                xml:space="preserve">
+                        <g>
+                            <path d="M22.766,0.001C10.194,0.001,0,10.193,0,22.766s10.193,22.765,22.766,22.765c12.574,0,22.766-10.192,22.766-22.765
+                                S35.34,0.001,22.766,0.001z M22.766,6.808c4.16,0,7.531,3.372,7.531,7.53c0,4.159-3.371,7.53-7.531,7.53
+                                c-4.158,0-7.529-3.371-7.529-7.53C15.237,10.18,18.608,6.808,22.766,6.808z M22.761,39.579c-4.149,0-7.949-1.511-10.88-4.012
+                                c-0.714-0.609-1.126-1.502-1.126-2.439c0-4.217,3.413-7.592,7.631-7.592h8.762c4.219,0,7.619,3.375,7.619,7.592
+                                c0,0.938-0.41,1.829-1.125,2.438C30.712,38.068,26.911,39.579,22.761,39.579z"/>
+                        </g>
+                        </svg></figure>
+                            <div class="ml-3 overflow-hidden">
+                            <p class="text-sm font-medium text-slate-900"> <a href="{% url 'profile' twit.user %}" class="link link-info">@{{twit.user|lower}}</a>  {{twit.twit_date}}</p>
+                            <h1 class="font-normal ">{{twit.body}}</h1>
+                            </div>
+                        </li>
+                    </ul>
+                {% endfor %}
+            {% endif %}
+
+        </div>
+        <div class="p-4">
+            <br><br>
+            <div class="card w-96 glass">
+                <div class="card-body">
+                <h2 class="card-title text-center">Following</h2> 
+                {% for following in user_profile.follows.all %}
+                    <ul role="list" class="p-6 divide-y divide-slate-200">
+                        <li class="flex py-4 first:pt-0 last:pb-0">
+                            <figure><svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                width="40px" height="40px" viewBox="0 0 45.532 45.532"
+                                xml:space="preserve">
+                        <g>
+                            <path d="M22.766,0.001C10.194,0.001,0,10.193,0,22.766s10.193,22.765,22.766,22.765c12.574,0,22.766-10.192,22.766-22.765
+                                S35.34,0.001,22.766,0.001z M22.766,6.808c4.16,0,7.531,3.372,7.531,7.53c0,4.159-3.371,7.53-7.531,7.53
+                                c-4.158,0-7.529-3.371-7.529-7.53C15.237,10.18,18.608,6.808,22.766,6.808z M22.761,39.579c-4.149,0-7.949-1.511-10.88-4.012
+                                c-0.714-0.609-1.126-1.502-1.126-2.439c0-4.217,3.413-7.592,7.631-7.592h8.762c4.219,0,7.619,3.375,7.619,7.592
+                                c0,0.938-0.41,1.829-1.125,2.438C30.712,38.068,26.911,39.579,22.761,39.579z"/>
+                        </g>
+                        </svg></figure>
+                            <div class="ml-3 overflow-hidden">
+                            <p class="text-sm font-medium text-slate-900">{{following}}</p>
+                            <a href="{% url 'profile' following.user.username %}" class="link link-info">
+                                <h1 class="font-normal ">@{{following|lower}}</h1>
+                            </a>
+                            </div>
+                        </li>
+                    </ul>
+                {% endfor %}
+                </div>
+            </div>
+            <br>
+            <div class="card w-96 glass">
+                <div class="card-body">
+                <h2 class="card-title text-center">Followed by</h2> 
+                {% for followed_by in user_profile.followed_by.all %}
+                    <ul role="list" class="p-6 divide-y divide-slate-200">
+                        <li class="flex py-4 first:pt-0 last:pb-0">
+                            <figure><svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                width="40px" height="40px" viewBox="0 0 45.532 45.532"
+                                xml:space="preserve">
+                        <g>
+                            <path d="M22.766,0.001C10.194,0.001,0,10.193,0,22.766s10.193,22.765,22.766,22.765c12.574,0,22.766-10.192,22.766-22.765
+                                S35.34,0.001,22.766,0.001z M22.766,6.808c4.16,0,7.531,3.372,7.531,7.53c0,4.159-3.371,7.53-7.531,7.53
+                                c-4.158,0-7.529-3.371-7.529-7.53C15.237,10.18,18.608,6.808,22.766,6.808z M22.761,39.579c-4.149,0-7.949-1.511-10.88-4.012
+                                c-0.714-0.609-1.126-1.502-1.126-2.439c0-4.217,3.413-7.592,7.631-7.592h8.762c4.219,0,7.619,3.375,7.619,7.592
+                                c0,0.938-0.41,1.829-1.125,2.438C30.712,38.068,26.911,39.579,22.761,39.579z"/>
+                        </g>
+                        </svg></figure>
+                            <div class="ml-3 overflow-hidden">
+                            <p class="text-sm font-medium text-slate-900">{{followed_by}}</p>
+                            <a href="{% url 'profile' followed_by.user.username %}" class="link link-info">
+                                <h1 class="font-normal ">@{{followed_by|lower}}</h1>
+                            </a>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                {% endfor %}
+                </div>
+            </div>
+            <br>
+            <form method="POST">
+                {% csrf_token %}
+                {% if user_profile in user %}
+                    <button class="text-white bg-red-600 hover:bg-white hover:border hover:border-red-600 hover:text-red-600 rounded-md px-3 py-2 text-sm font-medium" name="unfollow" value="unfollow" type="submit">
+                        Unfollow @{{user_profile.user.username| lower}}
+                        </button>
+                {% else %}
+                    <button class="text-white bg-green-600 hover:bg-white hover:border hover:border-green-600 hover:text-green-600 rounded-md px-3 py-2 text-sm font-medium" name="follow" value="follow" type="submit">
+                        Follow @{{user_profile.user.username| lower}}
+                        </button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endif  %}
+
+{% endblock %}
