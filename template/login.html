@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+    {% block nav %}
+        {% if user.is_authenticated%}
+            {% include 'profilenavbar.html' %}
+        {% else %}
+            {% include 'navbar.html' %}
+        {% endif %}
+    {% endblock %}
+    {% block content %}
+        {% if user.is_authenticated %}
+        <br><br>
+        <div class="flex w-full items-center justify-center">
+            <div class="container w-full px-4">
+                <div class="flex flex-wrap justify-center">
+                    <div class="w-full lg:w-6/12 px-4">
+                        <div class=" flex flex-col min-w-0 break-words w-full shadow-lg rounded-lg bg-white">
+                            <div class="flex-auto p-5 lg:p-10">   
+                                <h1 class="text-2xl mb-4 text-gray-700 text-center font-semibold">You are already logged in as {{request.user}}</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="msg">
+                            <div role="alert" id="alert" class="alert alert-error bg-red-600 bg-opacity-30 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" id="closebtn" class="stroke-current shrink-0 h-10 w-10" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>{{message}}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            <br><br><br>
+            <div class="flex w-full items-center justify-center">
+                <div class="container w-full px-4">
+                    <div class="flex flex-wrap justify-center">
+                        <div class="w-full lg:w-6/12 px-4">
+                            <div class=" flex flex-col min-w-0 break-words w-full shadow-lg rounded-lg bg-white">
+                                <div class="flex-auto p-5 lg:p-10">
+                                    <h4 class="text-2xl mb-4 text-gray-700 text-center font-semibold">LogIn</h4>
+                                    <form id="feedbackForm" action="{% url 'sign in' %}" method="POST">
+                                        {% csrf_token %}
+                                        <div class="relative w-full mb-3">
+                                            <label class="block uppercase text-gray-700 text-xs font-bold mb-2">Username</label>
+                                            <input type="text" name="username" class="border-0 px-3 py-3 rounded text-sm shadow w-full bg-gray-300 placeholder-gray-700 text-gray-800 outline-none focus:bg-gray-400" placeholder="Username"
+                                                style="transition: all 0.15s ease 0s;" required />
+                                        </div>
+                                        <div class="relative w-full mb-3">
+                                            <label class="block uppercase text-gray-700 text-xs font-bold mb-2">Password</label>
+                                            <input type="password" name="userpassword" class="border-0 px-3 py-3 rounded text-sm shadow w-full bg-gray-300 placeholder-gray-700 text-gray-800 outline-none focus:bg-gray-400" placeholder="Password" 
+                                                style="transition: all 0.15s ease 0s;" required />
+                                        </div>
+                                        <div class="text-center mt-6">
+                                            <button id="feedbackBtn" class="cursor-pointer hover:opacity-80 inline-flex items-center shadow-md my-2 px-6 py-3 text-white bg-gray-900 border border-transparent
+                                                rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-gray-800 mr-1 mb-1"
+                                                type="submit" style="transition: all 0.15s ease 0s;">Submit
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                const erroralertbtnt= document.getElementById('closebtn');
+                const alertt= document.getElementById('alert');
+
+                if (erroralertbtnt != null){
+                erroralertbtnt.addEventListener('click', () => {
+                    if(alertt.classList.contains('hidden')){
+                        alertt.classList.remove('hidden');
+                    }else{
+                        alertt.classList.add('hidden');
+                    }
+                });
+            }
+            </script>
+        {% endif %}
+    {% endblock %}

@@ -119,3 +119,26 @@
     </div>
   </nav>
   
+  <script>
+    let userBtn= document.getElementById('useroptbtn');
+    const userMenu= document.getElementById('userdropdown');
+    let dropBtn= document.getElementById('dropBtn');
+    const mobileMenu= document.getElementById('mobile-menu');
+
+
+    userBtn.addEventListener('click', () => {
+      if(userMenu.classList.contains('hidden')){
+        userMenu.classList.remove('hidden');
+      }else{
+        userMenu.classList.add('hidden');
+      }
+    });
+
+    dropBtn.addEventListener('click', () => {
+    if(mobileMenu.classList.contains('hidden')){
+      mobileMenu.classList.remove('hidden');
+    }else{
+      mobileMenu.classList.add('hidden');
+    }
+  });
+  </script>

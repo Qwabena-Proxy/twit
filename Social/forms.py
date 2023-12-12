@@ -1,3 +1,6 @@
+from typing import Any
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django import forms
 from .models import *
 
@@ -19,3 +22,73 @@ class TwitForm(forms.ModelForm):
     class Meta:
         model= Twit
         exclude= ('user',)
+
+class SignUpForm(UserCreationForm):
+    email= forms.EmailField(
+        label='E-mail',
+        required= True,
+        widget= forms.widgets.EmailInput(
+            attrs={
+                'placeholder': 'E-mail',
+                'class': 'border-0 px-3 py-3 rounded mb-3 text-sm shadow w-full bg-gray-300 placeholder-gray-700 text-gray-800 outline-none focus:bg-gray-400',
+                'style': 'transition: all 0.15s ease 0s;',
+            }
+        )
+    )
+
+    first_name= forms.CharField(
+        max_length=100,
+        label='First Name',
+        required= False,
+        widget= forms.widgets.TextInput(
+            attrs={
+                'placeholder': 'First Name',
+                'class': 'border-0 px-3 py-3 rounded mb-3 text-sm shadow w-full bg-gray-300 placeholder-gray-700 text-gray-800 outline-none focus:bg-gray-400',
+                'style': 'transition: all 0.15s ease 0s;',
+            }
+        )
+    )
+
+    last_name= forms.CharField(
+        max_length=100,
+        label='Last Name',
+        required= False,
+        widget= forms.widgets.TextInput(
+            attrs={
+                'placeholder': 'Last Name',
+                'class': 'border-0 px-3 py-3 rounded mb-3 text-sm shadow w-full bg-gray-300 placeholder-gray-700 text-gray-800 outline-none focus:bg-gray-400',
+                'style': 'transition: all 0.15s ease 0s;',
+            }
+        )
+    )
+
+    class Meta:
+        model= User
+        fields= ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+
+    def __init__(self, *args, **kwargs):
+        super(SignUpForm, self).__init__(*args, **kwargs)
+
+        # Creating username field
+        self.fields['username'].widget.attrs['placeholder']= 'Username'
+        self.fields['username'].widget.attrs['class']= 'border-0 px-3 py-3 rounded mb-2 text-sm shadow w-full bg-gray-300 placeholder-gray-700 text-gray-800 outline-none focus:bg-gray-400'
+        self.fields['username'].widget.attrs['style']= 'transition: all 0.15s ease 0s;'
+        self.fields['username'].label= 'Username'
+        self.fields['username'].required= True
+        self.fields['username'].help_text= None
+
+        # Creating password1 field
+        self.fields['password1'].widget.attrs['placeholder']= 'Password'
+        self.fields['password1'].widget.attrs['class']= 'border-0 px-3 py-3 rounded mb-2 text-sm shadow w-full bg-gray-300 placeholder-gray-700 text-gray-800 outline-none focus:bg-gray-400'
+        self.fields['password1'].widget.attrs['style']= 'transition: all 0.15s ease 0s;'
+        self.fields['password1'].widget.label= 'Password'
+        self.fields['password1'].widget.required= True
+        self.fields['password1'].help_text= None
+
+        # Creating password2 field
+        self.fields['password2'].widget.attrs['placeholder']= 'Confirm password'
+        self.fields['password2'].widget.attrs['class']= 'border-0 px-3 py-3 rounded mb-2 text-sm shadow w-full bg-gray-300 placeholder-gray-700 text-gray-800 outline-none focus:bg-gray-400'
+        self.fields['password2'].widget.attrs['style']= 'transition: all 0.15s ease 0s;'
+        self.fields['password2'].widget.label= 'Confirm Password'
+        self.fields['password2'].widget.required= True
+        # self.fields['password1'].help_text= None

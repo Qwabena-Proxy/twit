@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User, auth
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import *
@@ -64,7 +65,67 @@ def profile(request,username):
     else:
         messages.success(request, ('You must be logged in to view this page...'))
         return redirect('index')
-    
-def logout(request):
+
+def login_user(request):
+    if request.method == 'POST':
+        username= request.POST['username']
+        userpassword= request.POST['userpassword']
+        user= authenticate(request, username= username, password= userpassword)
+        if user is not None:
+            login(request, user)
+            messages.success(request, ('You have been logged in...'))
+            return redirect('index')
+        else:
+            messages.success(request, ('There was an error logging in. Please try again...'))
+            return redirect('sign in')
+    else:
+        context= {
+
+        }
+        return render(request, 'login.html', context= context)
+
+def signup(request):
+    form= SignUpForm()
+    if request.method == 'POST':
+        form= SignUpForm(request.POST)
+        username= request.POST['username']
+        email= request.POST['email']
+        password= request.POST['password1']
+        confpassword= request.POST['password2']
+        if User.objects.filter(username= username).exists():
+            messages.success(request, ('Username already exist...'))
+            return redirect('sign up')
+        elif User.objects.filter(email= email).exists():
+            messages.success(request, ('Email already exist...'))
+            return redirect('sign up')
+        elif password != confpassword:
+            messages.success(request, ('Password doesn\'t match...'))
+            return redirect('sign up')
+        else:
+            if form.is_valid():
+                form.save()
+                username= form.cleaned_data['username']
+                password= form.cleaned_data['password1']
+                first_name= form.cleaned_data['first_name']
+                last_name= form.cleaned_data['last_name']
+                email= form.cleaned_data['email']
+                print(username, password, first_name, last_name, email, 'data')
+                user= authenticate(username= username, password= password)
+                login(request, user)
+                messages.success(request, (f'You are welcome to Twitty {username}...'))
+                return redirect('index')
+            else:
+                messages.success(request, ('Password is weak, it should be at least 8 character\'s and it can\'t be entirely numeric...'))
+                return redirect('sign up')
+    context= {
+        'form': form, 
+    }
+    return render(request, 'signup.html', context= context)
+
+def updateProfile(request):
+    pass
+
+def logout_user(request):
     auth.logout(request)
+    messages.success(request, ('You have been logged out...'))
     return redirect('index')
