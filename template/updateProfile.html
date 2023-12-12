@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+    {% block nav %}
+        {% if user.is_authenticated%}
+            {% include 'profilenavbar.html' %}
+        {% else %}
+            {% include 'navbar.html' %}
+        {% endif %}
+    {% endblock %}
+    {% block content %}
+    <h1 class="text-xl text-center font-bold text-gray-800">Update Profile</h1>
+    {% if messages %}
+        {% for message in messages %}
+            {% if user.is_authenticated %}
+                <div class="msg">
+                    <div role="alert" id="alert" class="alert alert-success bg-green-600 bg-opacity-30 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="closebtn" class="stroke-current shrink-0 h-10 w-10" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span>{{message}}</span>
+                    </div>
+                </div>
+            {% else%}
+                <div class="msg">
+                    <div role="alert" id="alerterror" class="alert alert-error bg-red-600 bg-opacity-30 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="closebtnerror" class="stroke-current shrink-0 h-10 w-10" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span>{{message}}</span>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <div class="grid grid-cols-3 gap-3">
+        content
+    </div>
+        <script>
+            let erroralertbtn= document.getElementById('closebtn');
+            let alert= document.getElementById('alert');
+            const erroralertbtnt= document.getElementById('closebtnerror');
+            const alertt= document.getElementById('alerterror');
+            
+            if (erroralertbtn != null){
+                erroralertbtn.addEventListener('click', () => {
+                    if(alert.classList.contains('hidden')){
+                        alert.classList.remove('hidden');
+                    }else{
+                        alert.classList.add('hidden');
+                    }
+                });
+            }
+            if (erroralertbtnt != null){
+                erroralertbtnt.addEventListener('click', () => {
+                    if(alertt.classList.contains('hidden')){
+                        alertt.classList.remove('hidden');
+                    }else{
+                        alertt.classList.add('hidden');
+                    }
+                });
+            }
+        </script>
+    {% endblock %}

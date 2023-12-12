@@ -123,7 +123,10 @@ def signup(request):
     return render(request, 'signup.html', context= context)
 
 def updateProfile(request):
-    pass
+    context={
+        
+    }
+    return render(request, 'updateProfile.html', context= context)
 
 def logout_user(request):
     auth.logout(request)
