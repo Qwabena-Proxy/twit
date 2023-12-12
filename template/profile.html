@@ -4,7 +4,17 @@
   {% include 'profilenavbar.html' %}
 {% endblock %}
 {% block content %}
-{% if user_profile%}
+{% if user_profile %}
+    {% if messages %}
+    {% for message in messages %}    
+        <div class="msg">
+            <div role="alert" id="alert" class="alert alert-success bg-green-600 bg-opacity-30 mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" id="closebtn" class="stroke-current shrink-0 h-10 w-10" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>{{message}}</span>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
     <div class="grid grid-cols-3 gap-3">
         <div class="p-4 col-span-2">
             <h1 class="text-xl font-bold text-gray-800">{{user_profile.user.username}}'s Profile</h1>
@@ -36,6 +46,32 @@
         </div>
         <div class="p-4">
             <br><br>
+            <div>
+                {% if user_profile.Profileimage %}
+                    <div class="avatar">
+                        <div class="w-24 rounded-full ring ring-gray-800 ring-offset-base-100 ring-offset-2">
+                        <img src="{{user_profile.Profileimage.url}}" />
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="avatar">
+                        <div class="w-24 rounded-full ring ring-gray-800 ring-offset-base-100 ring-offset-2">
+                            <figure ><svg fill="#000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                width="96px" height="96px" viewBox="0 0 45.532 45.532"
+                                xml:space="preserve">
+                           <g>
+                               <path d="M22.766,0.001C10.194,0.001,0,10.193,0,22.766s10.193,22.765,22.766,22.765c12.574,0,22.766-10.192,22.766-22.765
+                                   S35.34,0.001,22.766,0.001z M22.766,6.808c4.16,0,7.531,3.372,7.531,7.53c0,4.159-3.371,7.53-7.531,7.53
+                                   c-4.158,0-7.529-3.371-7.529-7.53C15.237,10.18,18.608,6.808,22.766,6.808z M22.761,39.579c-4.149,0-7.949-1.511-10.88-4.012
+                                   c-0.714-0.609-1.126-1.502-1.126-2.439c0-4.217,3.413-7.592,7.631-7.592h8.762c4.219,0,7.619,3.375,7.619,7.592
+                                   c0,0.938-0.41,1.829-1.125,2.438C30.712,38.068,26.911,39.579,22.761,39.579z"/>
+                           </g>
+                           </svg></figure>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <br>
             <div class="card w-96 glass">
                 <div class="card-body">
                 <h2 class="card-title text-center">Following</h2> 
@@ -108,12 +144,38 @@
                 {% endif %}
             </form>
             <br><br>
-            <a href="{% url 'update profile' %}" class="bg-gray-900 text-white text-center mx-auto hover:bg-gray-800 text-sm font-bold lowercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1" style="transition: all 0.15s ease 0s;">
-                Update your profile
-            </a>
+            {% if request.user.id == user_profile.id %}
+                <a href="{% url 'update profile' %}" class="bg-gray-900 text-white text-center mx-auto hover:bg-gray-800 text-sm font-bold lowercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1" style="transition: all 0.15s ease 0s;">
+                    Update your profile
+                </a>
+            {% endif %}
         </div>
     </div>
-    <!-- <script src="{% static './js/style.js' %}"></script> -->
+    <script>
+        let erroralertbtn= document.getElementById('closebtn');
+        let alert= document.getElementById('alert');
+        const erroralertbtnt= document.getElementById('closebtnerror');
+        const alertt= document.getElementById('alerterror');
+        
+        if (erroralertbtn != null){
+            erroralertbtn.addEventListener('click', () => {
+                if(alert.classList.contains('hidden')){
+                    alert.classList.remove('hidden');
+                }else{
+                    alert.classList.add('hidden');
+                }
+            });
+        }
+        if (erroralertbtnt != null){
+            erroralertbtnt.addEventListener('click', () => {
+                if(alertt.classList.contains('hidden')){
+                    alertt.classList.remove('hidden');
+                }else{
+                    alertt.classList.add('hidden');
+                }
+            });
+        }
+    </script>
 {% endif  %}
 
 {% endblock %}

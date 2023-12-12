@@ -88,45 +88,47 @@ def signup(request):
     form= SignUpForm()
     if request.method == 'POST':
         form= SignUpForm(request.POST)
-        username= request.POST['username']
-        email= request.POST['email']
-        password= request.POST['password1']
-        confpassword= request.POST['password2']
-        if User.objects.filter(username= username).exists():
-            messages.success(request, ('Username already exist...'))
-            return redirect('sign up')
-        elif User.objects.filter(email= email).exists():
-            messages.success(request, ('Email already exist...'))
-            return redirect('sign up')
-        elif password != confpassword:
-            messages.success(request, ('Password doesn\'t match...'))
-            return redirect('sign up')
+        if form.is_valid():
+            form.save()
+            username= form.cleaned_data['username']
+            password= form.cleaned_data['password1']
+            first_name= form.cleaned_data['first_name']
+            last_name= form.cleaned_data['last_name']
+            email= form.cleaned_data['email']
+            user= authenticate(username= username, password= password)
+            login(request, user)
+            messages.success(request, (f'You are welcome to Twitty {username}...'))
+            return redirect('index')
         else:
-            if form.is_valid():
-                form.save()
-                username= form.cleaned_data['username']
-                password= form.cleaned_data['password1']
-                first_name= form.cleaned_data['first_name']
-                last_name= form.cleaned_data['last_name']
-                email= form.cleaned_data['email']
-                print(username, password, first_name, last_name, email, 'data')
-                user= authenticate(username= username, password= password)
-                login(request, user)
-                messages.success(request, (f'You are welcome to Twitty {username}...'))
-                return redirect('index')
-            else:
-                messages.success(request, ('Password is weak, it should be at least 8 character\'s and it can\'t be entirely numeric...'))
-                return redirect('sign up')
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.success(request, (f"Error: {error}"))
+            return redirect('sign up')
     context= {
         'form': form, 
     }
     return render(request, 'signup.html', context= context)
 
 def updateProfile(request):
-    context={
-        
-    }
-    return render(request, 'updateProfile.html', context= context)
+    if request.user.is_authenticated:
+        currentUser= User.objects.get(id= request.user.id)
+        form= SignUpForm(request.POST or None, instance= currentUser)
+        if form.is_valid():
+            form.save()
+            login(request, currentUser)
+            messages.success(request, ('Your profile has been updated...'))
+            return redirect('profile', username= currentUser.username)
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.success(request, (f"Error: {error}"))
+        context={
+            'form': form,
+        }
+        return render(request, 'updateProfile.html', context= context)
+    else:
+        messages.success(request, ('You must be logged in to view this page...'))
+        return redirect('index')
 
 def logout_user(request):
     auth.logout(request)

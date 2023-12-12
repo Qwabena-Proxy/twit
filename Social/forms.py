@@ -92,3 +92,10 @@ class SignUpForm(UserCreationForm):
         self.fields['password2'].widget.label= 'Confirm Password'
         self.fields['password2'].widget.required= True
         # self.fields['password1'].help_text= None
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username and username != self.initial.get('username'):
+            if User.objects.filter(username=username).exists():
+                raise forms.ValidationError('This username is already taken. Please choose a different username.')
+        return username

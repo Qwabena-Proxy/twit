@@ -9,8 +9,8 @@ class UserProfile(models.Model):
         'self', related_name='followed_by', symmetrical=False, blank= True
     )
     date_modified= models.DateTimeField(User, auto_now=True)
+    Profileimage = models.ImageField(upload_to='images/profiles/', blank=True, null=True)
     # bio = models.TextField(max_length=255, blank=True, null=True)
-    # image = models.ImageField(upload_to='images/', blank=True, null=True)
 
     def __str__(self):
         return self.user.username

@@ -28,9 +28,53 @@
             {% endif %}
         {% endfor %}
     {% endif %}
-    <div class="grid grid-cols-3 gap-3">
-        content
-    </div>
+    <br><br><br>
+            <div class="flex w-full items-center justify-center">
+                <div class="container w-full px-4">
+                    <div class="flex flex-wrap justify-center">
+                        <div class="w-full lg:w-6/12 px-4">
+                            <div class=" flex flex-col min-w-0 break-words w-full shadow-lg rounded-lg bg-white">
+                                <div class="flex-auto p-5 lg:p-10">
+                                    <h4 class="text-2xl mb-4 text-gray-700 text-center font-semibold">SignUp</h4>
+                                    <form id="feedbackForm" action="" method="POST">
+                                        {% csrf_token %}
+                                        <div>
+                                            <label for="{{ form.first_name.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ form.first_name.label }}</label>
+                                            {{ form.first_name }}
+                                        </div>
+                                        <div>
+                                            <label for="{{ form.last_name.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ form.last_name.label }}</label>
+                                            {{ form.last_name }}
+                                        </div>
+                                        <div>
+                                            <label for="{{ form.username.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ form.username.label }}</label>
+                                            {{ form.username }}
+                                        </div>
+                                        <div>
+                                            <label for="{{ form.email.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ form.email.label }}</label>
+                                            {{ form.email }}
+                                        </div>
+                                        <div>
+                                            <label for="{{ form.password1.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ form.password1.label }}</label>
+                                            {{ form.password1 }}
+                                        </div>
+                                        <div>
+                                            <label for="{{ form.password2.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ form.password2.label }}</label>
+                                            {{ form.password2 }}
+                                        </div>
+                                        <div class="text-center mt-6">
+                                            <button id="feedbackBtn" class="cursor-pointer hover:opacity-80 inline-flex items-center shadow-md my-2 px-6 py-3 text-white bg-gray-900 border border-transparent
+                                                rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-gray-800 mr-1 mb-1"
+                                                type="submit" style="transition: all 0.15s ease 0s;">Register
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <script>
             let erroralertbtn= document.getElementById('closebtn');
             let alert= document.getElementById('alert');
