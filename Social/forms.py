@@ -4,6 +4,70 @@ from django.contrib.auth.models import User
 from django import forms
 from .models import *
 
+
+#Profilepic form
+class ProfilepicForm(forms.ModelForm):
+    Profileimage= forms.ImageField(
+        label='Profile Image',
+        required= False,
+        widget= forms.widgets.FileInput(
+            attrs={
+                'class': 'bg-gray-900 text-white text-center mx-auto hover:bg-gray-800 text-sm font-bold lowercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1',
+                'type': 'file',
+              'style': 'transition: all 0.15s ease 0s;',
+            }
+        )
+    )
+    bio = forms.CharField(
+        label='Profile bio',
+        required= False,
+        widget=forms.Textarea(
+            attrs={
+                'rows': '15',
+                'cols': '80',
+                'placeholder': "Enter your profile bio here..",
+                'class': 'border-0 px-3 py-3 bg-gray-300 placeholder-gray-700 text-gray-800 rounded text-sm shadow focus:outline-none w-full mb-2'
+            }
+        )
+    )
+    homepage_link = forms.CharField(
+        label='Website link',
+        required= False,
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Website link',
+                'class': 'border-0 px-3 py-3 rounded mb-3 text-sm shadow w-full bg-gray-300 placeholder-gray-700 text-gray-800 outline-none focus:bg-gray-400',
+                'style': 'transition: all 0.15s ease 0s;',
+            }
+        )
+    )
+    github_link = forms.CharField(
+        label='Github link',
+        required= False,
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Github link',
+                'class': 'border-0 px-3 py-3 rounded mb-3 text-sm shadow w-full bg-gray-300 placeholder-gray-700 text-gray-800 outline-none focus:bg-gray-400',
+                'style': 'transition: all 0.15s ease 0s;',
+            }
+        )
+    )
+    twitter_link = forms.CharField(
+        label='Twitter link',
+        required= False,
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Twitter link',
+                'class': 'border-0 px-3 py-3 rounded mb-3 text-sm shadow w-full bg-gray-300 placeholder-gray-700 text-gray-800 outline-none focus:bg-gray-400',
+                'style': 'transition: all 0.15s ease 0s;',
+            }
+        )
+    )
+
+    class Meta:
+        model= UserProfile
+        fields= ('Profileimage', 'bio', 'homepage_link', 'github_link', 'twitter_link')
+
 class TwitForm(forms.ModelForm):
     body= forms.CharField(
         required= True, 
@@ -12,7 +76,7 @@ class TwitForm(forms.ModelForm):
                 'rows': '15',
                 'cols': '80',
                 'placeholder': "Enter your twits here..",
-                'class': 'border-0 px-3 py-3 bg-gray-300 placeholder-black text-gray-800 rounded text-sm shadow focus:outline-none w-full'
+                'class': 'border-0 px-3 py-3 bg-gray-300 placeholder-gray-700 text-gray-800 rounded text-sm shadow focus:outline-none w-full'
             }
         ), 
         label='',
@@ -21,7 +85,7 @@ class TwitForm(forms.ModelForm):
 
     class Meta:
         model= Twit
-        exclude= ('user',)
+        exclude= ('user', 'likes', )
 
 class SignUpForm(UserCreationForm):
     email= forms.EmailField(

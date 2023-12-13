@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, auth
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import *
 from .forms import *
@@ -112,18 +112,22 @@ def signup(request):
 def updateProfile(request):
     if request.user.is_authenticated:
         currentUser= User.objects.get(id= request.user.id)
-        form= SignUpForm(request.POST or None, instance= currentUser)
-        if form.is_valid():
+        currentUserProfile= UserProfile.objects.get(user__id= request.user.id)
+        form= SignUpForm(request.POST or None, request.FILES or None, instance= currentUser)
+        profileForm= ProfilepicForm(request.POST or None, request.FILES or None, instance= currentUserProfile)
+        if form.is_valid() and profileForm.is_valid():
             form.save()
+            profileForm.save()
             login(request, currentUser)
             messages.success(request, ('Your profile has been updated...'))
-            return redirect('profile', username= currentUser.username)
+            return redirect('index')
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.success(request, (f"Error: {error}"))
         context={
             'form': form,
+            'profileForm': profileForm,
         }
         return render(request, 'updateProfile.html', context= context)
     else:
@@ -134,3 +138,30 @@ def logout_user(request):
     auth.logout(request)
     messages.success(request, ('You have been logged out...'))
     return redirect('index')
+
+def twit_like(request, pk):
+    if request.user.is_authenticated:
+        twit= get_object_or_404(Twit, id= pk)
+        if twit.likes.filter(id= request.user.id):
+            twit.likes.remove(request.user)
+        else: 
+            twit.likes.add(request.user)
+        return redirect(request.META.get('HTTP_REFERER'))
+    else:
+        messages.success(request, ('You must be logged in to perform this action...'))
+        return redirect('index')
+    
+def twit_share(request, pk):
+    # if request.user.is_authenticated:
+    twit= get_object_or_404(Twit, id= pk)
+    if twit:
+        context={
+            'twit': twit,
+        }
+        return render(request, 'show twit.html', context= context)
+    else: 
+        messages.success(request, ('You must be logged in to perform this action...'))
+        return redirect('index')
+    # else:
+    #     messages.success(request, ('You must be logged in to perform this action...'))
+    #     return redirect('index')

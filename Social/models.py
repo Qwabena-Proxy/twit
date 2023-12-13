@@ -10,7 +10,11 @@ class UserProfile(models.Model):
     )
     date_modified= models.DateTimeField(User, auto_now=True)
     Profileimage = models.ImageField(upload_to='images/profiles/', blank=True, null=True)
-    # bio = models.TextField(max_length=255, blank=True, null=True)
+    bio = models.CharField(max_length=500, blank=True, null=True)
+    homepage_link = models.CharField(max_length=100, blank=True, null=True)
+    github_link = models.CharField(max_length=100, blank=True, null=True)
+    twitter_link = models.CharField(max_length=100, blank=True, null=True)
+
 
     def __str__(self):
         return self.user.username
@@ -20,6 +24,11 @@ class Twit(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     body = models.CharField(max_length= 200)
     twit_date= models.DateTimeField(auto_now_add= True)
+    likes= models.ManyToManyField(User, related_name= 'twit_likes', blank= True, )
+
+    # keep count of likess
+    def number_of_likes(self):
+        return self.likes.count()
 
     def __str__(self):
         return(

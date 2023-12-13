@@ -8,5 +8,7 @@ urlpatterns = [
     path('signup', views.signup, name='sign up'),
     path('profile list', views.profileList, name='profile list'),
     path('update profile', views.updateProfile, name='update profile'),
+    path('twit_like/<int:pk>', views.twit_like, name='twit_like'),
+    path('twit_share/<int:pk>', views.twit_share, name='twit_share'),
     path('<str:username>', views.profile, name='profile'),
 ]

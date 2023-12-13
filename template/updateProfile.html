@@ -36,7 +36,7 @@
                             <div class=" flex flex-col min-w-0 break-words w-full shadow-lg rounded-lg bg-white">
                                 <div class="flex-auto p-5 lg:p-10">
                                     <h4 class="text-2xl mb-4 text-gray-700 text-center font-semibold">SignUp</h4>
-                                    <form id="feedbackForm" action="" method="POST">
+                                    <form id="feedbackForm" action="" method="POST" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         <div>
                                             <label for="{{ form.first_name.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ form.first_name.label }}</label>
@@ -62,10 +62,34 @@
                                             <label for="{{ form.password2.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ form.password2.label }}</label>
                                             {{ form.password2 }}
                                         </div>
+                                        <div>
+                                            <label for="{{ profileForm.profile_image.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ profileForm.Profileimage.label }}</label>
+                                            <label id="feedbackBtn" class="mb-2 cursor-pointer hover:opacity-80 inline-flex items-center shadow-md px-3 py-3 text-white bg-gray-900 border border-transparent
+                                                rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-gray-800 "
+                                                type="submit" style="transition: all 0.15s ease 0s;">No image selected
+                                                <label class="">{{ profileForm.Profileimage }}</label>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label for="{{ profileForm.bio.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ profileForm.bio.label }}</label>
+                                            {{ profileForm.bio }}
+                                        </div>
+                                        <div>
+                                            <label for="{{ profileForm.homepage_link.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ profileForm.homepage_link.label }}</label>
+                                            {{ profileForm.homepage_link }}
+                                        </div>
+                                        <div>
+                                            <label for="{{ profileForm.github_link.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ profileForm.github_link.label }}</label>
+                                            {{ profileForm.github_link }}
+                                        </div>
+                                        <div>
+                                            <label for="{{ profileForm.twitter_link.id_for_label }}" class="block uppercase text-gray-700 text-xs font-bold mb-2">{{ profileForm.twitter_link.label }}</label>
+                                            {{ profileForm.twitter_link }}
+                                        </div>
                                         <div class="text-center mt-6">
                                             <button id="feedbackBtn" class="cursor-pointer hover:opacity-80 inline-flex items-center shadow-md my-2 px-6 py-3 text-white bg-gray-900 border border-transparent
                                                 rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-gray-800 mr-1 mb-1"
-                                                type="submit" style="transition: all 0.15s ease 0s;">Register
+                                                type="submit" style="transition: all 0.15s ease 0s;">Update Profile
                                             </button>
                                         </div>
                                     </form>
