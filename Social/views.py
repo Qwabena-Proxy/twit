@@ -125,6 +125,9 @@ def updateProfile(request):
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.success(request, (f"Error: {error}"))
+            for field, errors in profileForm.errors.items():
+                for error in errors:
+                    messages.success(request, (f"Error in {field}: {error}"))
         context={
             'form': form,
             'profileForm': profileForm,

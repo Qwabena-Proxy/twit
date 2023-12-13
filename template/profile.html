@@ -134,30 +134,45 @@
                 </div>
             </div><br>
             <!-- links -->
-            <div class="flex justify-center space-x-3">
+            <div class="flex -mt-6 justify-center space-x-6">
                 {% if user_profile.homepage_link %}
                 <div>
-                    <a href="" class="text-gray-700">
-                        <i class="fas fa-globe fa-lg"></i>
+                    <a href="{{user_profile.homepage_link}}" target="_blank" class="text-gray-700 transition-transform duration-300 transform hover:scale-150 hover:text-gray-900" >
+                        <span class="inline-block transform hover:scale-105">
+                            <i class="fas fa-link fa-2xl"></i>
+                        </span>
                     </a>
                 </div>
                 {% endif %}
                 {% if user_profile.github_link %}
                 <div>
-                    <a href="">
-                        <i class="fab fa-github fa-lg"></i>
+                    <a href="{{user_profile.github_link}}" target="_blank" class="text-gray-700 transition-transform duration-300 transform hover:scale-150 hover:text-gray-900" >
+                        <span class="inline-block transform hover:scale-105">
+                            <i class="fab fa-github fa-2xl"></i>
+                        </span>
                     </a>
                 </div>
                 {% endif %}
                 {% if user_profile.twitter_link %}
                 <div>
-                    <a href="">
-                        <i class="fas fa-twitter fa-lg"></i>
+                    <a href="{{ser_profile.twitter_link}}" target="_blank" class="text-gray-700 transition-transform duration-300 transform hover:scale-150 hover:text-gray-900" >
+                        <span class="inline-block transform hover:scale-105">
+                            <i class="fab fa-twitter fa-2xl "></i>
+                        </span>
                     </a>
                 </div>
                 {% endif %}
             </div>
             <!-- end of links -->
+            <div class="flex justify-center">
+                <hr class="px-4 w-1/2 border-gray-300 my-3">
+            </div>
+            <div>
+                {% if user_profile.bio %}
+                <p class="text-gray-700 text-sm font-normal text-left">
+                    {{user_profile.bio}}
+                {% endif %}
+            </div>
             <br>
             <div class="card w-96 glass">
                 <div class="card-body">
