@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block nav %}
+  {% include 'profilenavbar.html' %}
+{% endblock %}
+{% block content %}
+{% if user_profile %}
+    {% if messages %}
+    {% for message in messages %}    
+        <div class="msg">
+            <div role="alert" id="alert" class="alert alert-success bg-green-600 bg-opacity-30 mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" id="closebtn" class="stroke-current shrink-0 h-10 w-10" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>{{message}}</span>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+    <div class="grid grid-cols-3 gap-3">
+        <div class="p-4 col-span-2">
+            <h1 class="text-xl font-bold text-gray-800 text-center capitalize">{{user_profile.user.username}} Follows</h1>
+            <br>
+
+            {% for following in user_profile.follows.all %}
+                <ul role="list" class="flex p-6 divide-y divide-slate-200">
+                    <li class="flex py-4 first:pt-0 last:pb-0">
+                        {% if following.user.userprofile.Profileimage %}
+                            <div class="avatar">
+                                <div class="w-10 h-10 rounded-full ring ring-gray-800 ring-offset-base-100 ring-offset-2">
+                                <img src="{{following.user.userprofile.Profileimage.url}}" alt="{{following.user.username}}"/>
+                                </div>
+                            </div>
+                        {% else %}
+                            <figure>
+                                <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                    width="40px" height="40px" viewBox="0 0 45.532 45.532"
+                                    xml:space="preserve">
+                                    <g>
+                                        <path d="M22.766,0.001C10.194,0.001,0,10.193,0,22.766s10.193,22.765,22.766,22.765c12.574,0,22.766-10.192,22.766-22.765
+                                            S35.34,0.001,22.766,0.001z M22.766,6.808c4.16,0,7.531,3.372,7.531,7.53c0,4.159-3.371,7.53-7.531,7.53
+                                            c-4.158,0-7.529-3.371-7.529-7.53C15.237,10.18,18.608,6.808,22.766,6.808z M22.761,39.579c-4.149,0-7.949-1.511-10.88-4.012
+                                            c-0.714-0.609-1.126-1.502-1.126-2.439c0-4.217,3.413-7.592,7.631-7.592h8.762c4.219,0,7.619,3.375,7.619,7.592
+                                            c0,0.938-0.41,1.829-1.125,2.438C30.712,38.068,26.911,39.579,22.761,39.579z"/>
+                                    </g>
+                                </svg>
+                            </figure>
+                        {% endif %}
+                        <div class="ml-3 overflow-hidden">
+                        <p class="text-sm font-medium text-slate-900">{{following}}</p>
+                        <a href="{% url 'profile' following.user.username %}" class="link link-info">
+                            <h1 class="font-normal ">@{{following|lower}}</h1>
+                        </a>
+                        </div>
+                    </li> 
+                    <!-- checking if the follower's id is == user id -->
+                    {% if display %}
+                        {% if following.id != request.user.id%}
+                        <!-- Grabbiing all instance of followers of the follower to loop through if user is in their followers list -->
+                                {% for followers_in_follower in following.followed_by.all%}
+                                {% if request.user.id == followers_in_follower.id %}
+                                    <div class="ml-3">
+                                        <a href="{% url 'unfollow' following.user.id %}" class="text-white bg-red-600 hover:bg-white hover:border hover:border-red-600 hover:text-red-600 rounded-md px-3 py-2 text-sm font-medium">Unfollow</a>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            {% endfor %}
+
+        </div>
+        <div class="p-4 text-center">
+            <br><br>
+            <div class="flex">
+                <div class="mr-5">
+                    {% if user_profile.Profileimage %}
+                        <div class="avatar">
+                            <div class="w-24 rounded-full ring ring-gray-800 ring-offset-base-100 ring-offset-2">
+                            <img src="{{user_profile.Profileimage.url}}" />
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="avatar">
+                            <div class="w-24 rounded-full ring ring-gray-800 ring-offset-base-100 ring-offset-2">
+                                <figure ><svg fill="#000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                    width="96px" height="96px" viewBox="0 0 45.532 45.532"
+                                    xml:space="preserve">
+                               <g>
+                                   <path d="M22.766,0.001C10.194,0.001,0,10.193,0,22.766s10.193,22.765,22.766,22.765c12.574,0,22.766-10.192,22.766-22.765
+                                       S35.34,0.001,22.766,0.001z M22.766,6.808c4.16,0,7.531,3.372,7.531,7.53c0,4.159-3.371,7.53-7.531,7.53
+                                       c-4.158,0-7.529-3.371-7.529-7.53C15.237,10.18,18.608,6.808,22.766,6.808z M22.761,39.579c-4.149,0-7.949-1.511-10.88-4.012
+                                       c-0.714-0.609-1.126-1.502-1.126-2.439c0-4.217,3.413-7.592,7.631-7.592h8.762c4.219,0,7.619,3.375,7.619,7.592
+                                       c0,0.938-0.41,1.829-1.125,2.438C30.712,38.068,26.911,39.579,22.761,39.579z"/>
+                               </g>
+                               </svg></figure>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="grid grid-rows-2">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <div class="col-span-3 text-left text-lg font-bold text-gray-800 capitalize">{{user_profile.user.username}}</div>
+                        <div class="">
+                            <form method="POST">
+                                {% csrf_token %}
+                                {% if user_profile.id == request.user.id %}
+                                {% else%}
+                                    {% if user_profile in user %} 
+                                        <button class="text-white bg-red-600 hover:bg-white hover:border hover:border-red-600 hover:text-red-600 rounded-md px-3 py-2 text-sm font-medium" name="unfollow" value="unfollow" type="submit">
+                                            Unfollow
+                                            </button>
+                                    {% else %}
+                                        <!-- checking in follower  following list to allow the user to follow back -->
+                                        {% if request.user.id in user_profile_ids  %}
+                                            <button class="text-white bg-green-600 hover:bg-white hover:border hover:border-green-600 hover:text-green-600 rounded-md px-3 py-2 text-sm font-medium" name="follow" value="follow" type="submit">
+                                            Follow Back
+                                            </button>
+                                        {% else %}
+                                            <button class="text-white bg-green-600 hover:bg-white hover:border hover:border-green-600 hover:text-green-600 rounded-md px-3 py-2 text-sm font-medium" name="follow" value="follow" type="submit">
+                                            Follow
+                                            </button>
+                                        {% endif %}
+                                        
+                                    {% endif %}
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <a href="{% url 'following' user_profile.user.username %}" class="transition-transform duration-300 transform hover:scale-105">
+                            <div class="grid grid-rows-2 gap-5 items-center text-center transform hover:scale-105">
+                                <div>Following</div>
+                                <div class="-mt-10">{{user_profile.follows.all.count}}</div>
+                            </div>
+                        </a>
+                        <a href="{% url 'followers' user_profile.user.username %}" class="transition-transform duration-300 transform hover:scale-105">
+                            <div class="grid grid-rows-2 gap-5 items-center text-center transform hover:scale-105">
+                                <div>Followers</div>
+                                <div class="-mt-10">{{user_profile.followed_by.all.count}}</div>
+                            </div>
+                        </a>
+                        <a href="{% url 'profile' user_profile.user.username %}" class="transition-transform duration-300 transform hover:scale-105">
+                            <div class="grid grid-rows-2 gap-5 items-center text-center transform hover:scale-105">
+                                <div>Twitts</div>
+                                <div class="-mt-10">{{mytwits.count}}</div>
+                            </div>
+                        </a>    
+                    </div>
+                </div>
+            </div><br>
+            <!-- links -->
+            <div class="flex -mt-6 justify-center space-x-6">
+                {% if user_profile.homepage_link %}
+                <div>
+                    <a href="{{user_profile.homepage_link}}" target="_blank" class="text-gray-700 transition-transform duration-300 transform hover:scale-150 hover:text-gray-900" >
+                        <span class="inline-block transform hover:scale-105">
+                            <i class="fas fa-link fa-2xl"></i>
+                        </span>
+                    </a>
+                </div>
+                {% endif %}
+                {% if user_profile.github_link %}
+                <div>
+                    <a href="{{user_profile.github_link}}" target="_blank" class="text-gray-700 transition-transform duration-300 transform hover:scale-150 hover:text-gray-900" >
+                        <span class="inline-block transform hover:scale-105">
+                            <i class="fab fa-github fa-2xl"></i>
+                        </span>
+                    </a>
+                </div>
+                {% endif %}
+                {% if user_profile.twitter_link %}
+                <div>
+                    <a href="{{ser_profile.twitter_link}}" target="_blank" class="text-gray-700 transition-transform duration-300 transform hover:scale-150 hover:text-gray-900" >
+                        <span class="inline-block transform hover:scale-105">
+                            <i class="fab fa-twitter fa-2xl "></i>
+                        </span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <!-- end of links -->
+            <div class="flex justify-center">
+                <hr class="px-4 w-1/2 border-gray-300 my-3">
+            </div>
+            <div>
+                {% if user_profile.bio %}
+                <p class="text-gray-700 text-sm font-normal text-left">
+                    {{user_profile.bio}}
+                {% endif %}
+            </div>
+            <br>
+            
+            <br><br>
+            {% if request.user.id == user_profile.id %}
+                <a href="{% url 'update profile' %}" class="bg-gray-900 text-white text-center mx-auto hover:bg-gray-800 text-sm font-bold lowercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1" style="transition: all 0.15s ease 0s;">
+                    Update your profile
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        let erroralertbtn= document.getElementById('closebtn');
+        let alert= document.getElementById('alert');
+        const erroralertbtnt= document.getElementById('closebtnerror');
+        const alertt= document.getElementById('alerterror');
+        
+        if (erroralertbtn != null){
+            erroralertbtn.addEventListener('click', () => {
+                if(alert.classList.contains('hidden')){
+                    alert.classList.remove('hidden');
+                }else{
+                    alert.classList.add('hidden');
+                }
+            });
+        }
+        if (erroralertbtnt != null){
+            erroralertbtnt.addEventListener('click', () => {
+                if(alertt.classList.contains('hidden')){
+                    alertt.classList.remove('hidden');
+                }else{
+                    alertt.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+{% endif  %}
+
+{% endblock %}

@@ -50,14 +50,19 @@ def profile(request,username):
         if request.method == "POST":
             if request.POST.get('follow'):
                 cuntUser.follows.add(profile)
-                # return redirect('profile', username=username)
+                messages.success(request, (f'You have started following {username}...'))
             elif request.POST.get('unfollow'):
                 cuntUser.follows.remove(profile)
-                # return redirect('profile', username=username)
+                messages.success(request, (f'You have successfully unfollowed {username}...'))
             cuntUser.save()
+            return redirect(request.META.get('HTTP_REFERER'))
+        username_followers_id= []
+        for users_followers in profile.follows.all():
+            username_followers_id.append(users_followers.id)
 
         context= {
             'user_profile': profile,
+            'user_profile_ids': username_followers_id,
             'user': cuntUser.follows.all,
             'mytwits': myTwits,
         }
@@ -120,7 +125,7 @@ def updateProfile(request):
             profileForm.save()
             login(request, currentUser)
             messages.success(request, ('Your profile has been updated...'))
-            return redirect('index')
+            return redirect('profile', username=request.user.username)
         else:
             for field, errors in form.errors.items():
                 for error in errors:
@@ -165,6 +170,165 @@ def twit_share(request, pk):
     else: 
         messages.success(request, ('You must be logged in to perform this action...'))
         return redirect('index')
-    # else:
-    #     messages.success(request, ('You must be logged in to perform this action...'))
-    #     return redirect('index')
+    
+def twit_delete(request, pk):
+    if request.user.is_authenticated:
+        twit= get_object_or_404(Twit, id= pk)
+        if request.user.username == twit.user.username:
+            twit.delete()
+            messages.success(request, ('You have successfully deleted your twit...'))
+            return redirect(request.META.get('HTTP_REFERER'))
+        else:
+            messages.success(request, ('Sorry, you  can\'t delete this twit because you don\'t own it ...'))
+            return redirect('index')
+    else:
+        messages.success(request, ('You must be logged in to perform this action...'))
+        return redirect('index')
+    
+def twit_edit(request, pk):
+    twit= get_object_or_404(Twit, id= pk)
+    if request.user.is_authenticated:
+        if request.user.username == twit.user.username:
+            twitsForm= TwitForm(request.POST or None, instance= twit)
+            if request.method == "POST":
+                if twitsForm.is_valid():
+                    twit= twitsForm.save(commit= False)
+                    twit.user= request.user
+                    twit.save()
+                    messages.success(request, ('You twit has been successfully updated...'))
+                    return redirect('profile', username=request.user.username)
+                else:
+                   for field, errors in twitsForm.errors.items():
+                        for error in errors:
+                            messages.success(request, (f"Error: {error}")) 
+            else:
+                context= {
+                    'twit': twit,
+                    'form': twitsForm,
+                }
+                return render(request, 'edit_twit.html', context= context)
+        else:
+            messages.success(request, ('You don\'t own this twit so you can\'t  view this page...'))
+            return redirect('index')
+    else:
+        messages.success(request, ('You must be logged in to perform this action...'))
+        return redirect('index')
+    
+#unfollow
+def unfollow(request, pk):
+    if request.user.is_authenticated:
+        profile_to_unfollow= UserProfile.objects.get(user_id= pk)
+        if request.user.id == profile_to_unfollow.id:
+            messages.success(request, (f'You cannot unfollow yourself...'))
+            return redirect(request.META.get('HTTP_REFERER'))
+        else:
+            request.user.userprofile.follows.remove(profile_to_unfollow)
+            request.user.userprofile.save()
+            messages.success(request, (f'You have successfully unfollowed {profile_to_unfollow.user.username}...'))
+            return redirect(request.META.get('HTTP_REFERER'))
+    else:
+        messages.success(request, ('You must be logged in to perform this action...'))
+        return redirect('index')
+
+#follow
+def follow(request, pk):
+    if request.user.is_authenticated:
+        profile_to_follow= UserProfile.objects.get(user_id= pk)
+        request.user.userprofile.follows.add(profile_to_follow)
+        request.user.userprofile.save()
+        messages.success(request, (f'You have started following {profile_to_follow.user.username}...'))
+        return redirect(request.META.get('HTTP_REFERER'))
+    else:
+        messages.success(request, ('You must be logged in to perform this action...'))
+        return redirect('index')
+
+def followers(request, username):
+    if request.user.is_authenticated:
+        userr = User.objects.get(username=username)
+        profile= UserProfile.objects.get(user= userr)
+        cuntUser= UserProfile.objects.get(user= User.objects.get(username=request.user))
+        myTwits= Twit.objects.filter(user= userr)
+
+        if request.method == "POST":
+            if request.POST.get('follow'):
+                cuntUser.follows.add(profile)
+                messages.success(request, (f'You have started following {username}...'))
+            elif request.POST.get('unfollow'):
+                cuntUser.follows.remove(profile)
+                messages.success(request, (f'You have successfully unfollowed {username}...'))
+            cuntUser.save()
+        username_followers_id= []
+        for users_followers in profile.follows.all():
+            username_followers_id.append(users_followers.id)
+        context= {
+            'user_profile': profile,
+            'user_profile_ids': username_followers_id,
+            'user': cuntUser.follows.all,
+            'mytwits': myTwits,
+        }
+        return render(request, 'followers.html', context= context)
+    else:
+        messages.success(request, ('You must be logged in to perform this action...'))
+        return redirect('index')
+
+
+def following(request, username):
+    display= False
+    if request.user.username == username:
+        display= True
+    if request.user.is_authenticated:
+        userr = User.objects.get(username=username)
+        profile= UserProfile.objects.get(user= userr)
+        cuntUser= UserProfile.objects.get(user= User.objects.get(username=request.user))
+        myTwits= Twit.objects.filter(user= userr).order_by('-twit_date')
+
+        if request.method == "POST":
+            if request.POST.get('follow'):
+                cuntUser.follows.add(profile)
+                messages.success(request, (f'You have started following {username}...'))
+            elif request.POST.get('unfollow'):
+                cuntUser.follows.remove(profile)
+                messages.success(request, (f'You have successfully unfollowed {username}...'))
+            cuntUser.save()
+        username_followers_id= []
+        for users_followers in profile.follows.all():
+            username_followers_id.append(users_followers.id)
+        context= {
+            'display': display,
+            'user_profile': profile,
+            'user_profile_ids': username_followers_id,
+            'user': cuntUser.follows.all,
+            'mytwits': myTwits,
+        }
+        return render(request, 'following.html', context= context)
+    else:
+        messages.success(request, ('You must be logged in to perform this action...'))
+        return redirect('index')
+
+def search(request):
+    if request.method == 'POST':
+        user_search= request.POST['search']
+        results= Twit.objects.filter(body__contains= user_search)
+        context= {
+            'results': results,
+            }
+        return render(request, 'search.html', context= context)
+    else:
+        context= {
+                
+            }
+        return render(request, 'search.html', context= context) 
+    
+def search_user(request):
+    if request.method == 'POST':
+        user_search= request.POST['search']
+        results= User.objects.filter(username__contains= user_search)
+        context= {
+            'results': results,
+            }
+        return render(request, 'search_user.html', context= context)
+    else:
+        context= {
+                
+            }
+        return render(request, 'search_user.html', context= context) 

@@ -17,9 +17,9 @@
     {% endif %}
     <div class="grid grid-cols-3 gap-3">
         <div class="p-4 col-span-2">
-            <h1 class="text-xl font-bold text-gray-800">{{user_profile.user.username}}'s Profile</h1>
-            <br>
             {% if mytwits %}
+                <h1 class="text-xl font-bold text-gray-800 capitalize">{{user_profile.user.username}}'s Twitts</h1>
+                <br>
                 {% for twit in mytwits %}
                     <ul role="list" class="p-4 rounded-lg border border-gray-300 max-w-fit mb-2">
                         <li class="flex py-4 first:pt-0 last:pb-0 ">
@@ -75,7 +75,7 @@
                                     {% endif %}
                                      {{twit.number_of_likes}} &nbsp;&nbsp;
                                      <a class="ml-2 mr-[2px] mt-[2px]" href="{% url 'twit_share' twit.id %}">
-                                         <svg fill="#000000" viewBox="0 0 32 32" width="20px" height="20px" xmlns="http://www.w3.org/2000/svg">
+                                         <svg fill="#0f172a" viewBox="0 0 32 32" width="20px" height="20px" xmlns="http://www.w3.org/2000/svg">
                                              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                                              <g id="SVGRepo_iconCarrier"> 
@@ -85,12 +85,27 @@
                                                  </g> 
                                              </g>
                                          </svg>
-                                     </a>
+                                     </a> &nbsp;
+                                     {% if request.user.username == twit.user.username %}
+                                        <a class="ml-2 mr-[2px] mt-[2px]" href="{% url 'twit_delete' twit.id %}">
+                                            <span>
+                                                <i class="fas fa-trash" aria-hidden="true"></i>
+                                            </span>
+                                        </a>&nbsp;
+                                        <a class="ml-2 mr-[2px] mt-[2px]" href="{% url 'twit_edit' twit.id %}">
+                                            <span>
+                                                <i class="fas fa-edit" aria-hidden="true"></i>
+                                            </span>
+                                        </a>
+                                    {% endif %}
                                 </h1>
                             </div>
                         </li>
                     </ul>
                 {% endfor %}
+            {% else %}
+                <h1 class="text-xl font-bold text-gray-800 capitalize">{{user_profile.user.username}} has no Twitts</h1>
+                <br>
             {% endif %}
 
         </div>
@@ -122,18 +137,54 @@
                         </div>
                     {% endif %}
                 </div>
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="grid grid-rows-2 gap-0 items-center text-center">
-                        <div>Following</div>
-                        <div class="-mt-10">{{user_profile.follows.all.count}}</div>
+                <div class="grid grid-rows-2">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <div class="col-span-3 text-left text-lg font-bold text-gray-800 capitalize">{{user_profile.user.username}}</div>
+                        <div class="">
+                            <form method="POST">
+                                {% csrf_token %}
+                                {% if user_profile.id == request.user.id %}
+                                {% else%}
+                                    {% if user_profile in user %} 
+                                        <button class="text-white bg-red-600 hover:bg-white hover:border hover:border-red-600 hover:text-red-600 rounded-md px-3 py-2 text-sm font-medium" name="unfollow" value="unfollow" type="submit">
+                                            Unfollow
+                                            </button>
+                                    {% else %}
+                                        <!-- checking in follower  following list to allow the user to follow back -->
+                                        {% if request.user.id in user_profile_ids  %}
+                                            <button class="text-white bg-green-600 hover:bg-white hover:border hover:border-green-600 hover:text-green-600 rounded-md px-3 py-2 text-sm font-medium" name="follow" value="follow" type="submit">
+                                            Follow Back
+                                            </button>
+                                        {% else %}
+                                            <button class="text-white bg-green-600 hover:bg-white hover:border hover:border-green-600 hover:text-green-600 rounded-md px-3 py-2 text-sm font-medium" name="follow" value="follow" type="submit">
+                                            Follow
+                                            </button>
+                                        {% endif %}
+                                        
+                                    {% endif %}
+                                {% endif %}
+                            </form>
+                        </div>
                     </div>
-                    <div class="grid grid-rows-2 gap-0 items-center text-center">
-                        <div>Followers</div>
-                        <div class="-mt-10">{{user_profile.followed_by.all.count}}</div>
-                    </div>
-                    <div class="grid grid-rows-2 gap-0 items-center text-center">
-                        <div>Twitts</div>
-                        <div class="-mt-10">{{mytwits.count}}</div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <a href="{% url 'following' user_profile.user.username %}" class="transition-transform duration-300 transform hover:scale-105">
+                            <div class="grid grid-rows-2 gap-5 items-center text-center transform hover:scale-105">
+                                <div>Following</div>
+                                <div class="-mt-10">{{user_profile.follows.all.count}}</div>
+                            </div>
+                        </a>
+                        <a href="{% url 'followers' user_profile.user.username %}" class="transition-transform duration-300 transform hover:scale-105">
+                            <div class="grid grid-rows-2 gap-5 items-center text-center transform hover:scale-105">
+                                <div>Followers</div>
+                                <div class="-mt-10">{{user_profile.followed_by.all.count}}</div>
+                            </div>
+                        </a>
+                        <a href="{% url 'profile' user_profile.user.username %}" class="transition-transform duration-300 transform hover:scale-105">
+                            <div class="grid grid-rows-2 gap-5 items-center text-center transform hover:scale-105">
+                                <div>Twitts</div>
+                                <div class="-mt-10">{{mytwits.count}}</div>
+                            </div>
+                        </a>    
                     </div>
                 </div>
             </div><br>
@@ -178,12 +229,13 @@
                 {% endif %}
             </div>
             <br>
-            <div class="card w-96 glass">
+            <!-- Card that displays people user follws -->
+            <!-- <div class="card w-96 glass">
                 <div class="card-body">
-                    <h2 class="card-title text-center">Following</h2> 
+                    <h2 class="card-title text-center capitalize">{{user_profile.user.username}} follows</h2> 
                     <div class="max-h-60 overflow-y-auto">
                         {% for following in user_profile.follows.all %}
-                            <ul role="list" class="p-6 divide-y divide-slate-200">
+                            <ul role="list" class="flex p-6 divide-y divide-slate-200">
                                 <li class="flex py-4 first:pt-0 last:pb-0">
                                     {% if following.user.userprofile.Profileimage %}
                                         <div class="avatar">
@@ -212,19 +264,32 @@
                                         <h1 class="font-normal ">@{{following|lower}}</h1>
                                     </a>
                                     </div>
-                                </li>
+                                </li> -->
+                                <!-- checking if the follower's id is == user id -->
+                                <!-- {% if following.id != request.user.id%} -->
+                                <!-- Grabbiing all instance of followers of the follower to loop through if user is in their followers list -->
+                                    <!-- {% for followers_in_follower in following.followed_by.all%}
+                                        {% if request.user.id == followers_in_follower.id %}
+                                            <div class="ml-3">
+                                                <a href="{% url 'unfollow' following.user.id %}" class="text-white bg-red-600 hover:bg-white hover:border hover:border-red-600 hover:text-red-600 rounded-md px-3 py-2 text-sm font-medium">Unfollow</a>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
                             </ul>
                         {% endfor %}
                     </div>
                 </div>
-            </div>
-            <br>
-            <div class="card w-96 glass">
+            </div> -->
+            <!-- End of card -->
+            <!-- <br> -->
+            <!-- Card that displays people user follws -->
+            <!-- <div class="card w-96 glass">
                 <div class="card-body">
-                    <h2 class="card-title text-center">Followed by</h2> 
+                    <h2 class="card-title text-center capitalize">{{user_profile.user.username}} is followed by</h2> 
                     <div class="max-h-60 overflow-y-auto">
                         {% for followed_by in user_profile.followed_by.all %}
-                            <ul role="list" class="p-6 divide-y divide-slate-200">
+                            <ul role="list" class="flex p-6 divide-y divide-slate-200">
                                 <li class="flex py-4 first:pt-0 last:pb-0">
                                     {% if followed_by.user.userprofile.Profileimage %}
                                         <div class="avatar">
@@ -253,26 +318,21 @@
                                         <h1 class="font-normal ">@{{followed_by|lower}}</h1>
                                     </a>
                                     </div>
-                                </li>
+                                </li> 
+                                {% if followed_by.id != request.user.id %} -->
+                                    <!-- checking if follower is not in user following list to allow the user to follow back -->
+                                    <!-- {% if followed_by not in request.user.userprofile.follows.all %}
+                                        <div class="ml-3">
+                                            <a href="{% url 'follow' followed_by.user.id %}" class="text-white bg-green-600 hover:bg-white hover:border hover:border-green-600 hover:text-green-600 rounded-md px-3 py-2 text-sm font-medium">Follow back</a>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
                             </ul>
                             
                         {% endfor %}
                     </div>
                 </div>
-            </div>
-            <br>
-            <form method="POST">
-                {% csrf_token %}
-                {% if user_profile in user %}
-                    <button class="text-white bg-red-600 hover:bg-white hover:border hover:border-red-600 hover:text-red-600 rounded-md px-3 py-2 text-sm font-medium" name="unfollow" value="unfollow" type="submit">
-                        Unfollow @{{user_profile.user.username| lower}}
-                        </button>
-                {% else %}
-                    <button class="text-white bg-green-600 hover:bg-white hover:border hover:border-green-600 hover:text-green-600 rounded-md px-3 py-2 text-sm font-medium" name="follow" value="follow" type="submit">
-                        Follow @{{user_profile.user.username| lower}}
-                        </button>
-                {% endif %}
-            </form>
+            </div> -->
             <br><br>
             {% if request.user.id == user_profile.id %}
                 <a href="{% url 'update profile' %}" class="bg-gray-900 text-white text-center mx-auto hover:bg-gray-800 text-sm font-bold lowercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1" style="transition: all 0.15s ease 0s;">

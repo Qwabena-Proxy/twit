@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block nav %}
+        {% if user.is_authenticated%}
+            {% include 'profilenavbar.html' %}
+        {% else %}
+            {% include 'navbar.html' %}
+        {% endif %}
+    {% endblock %}
+{% block content %}
+    {% if messages %}
+    {% for message in messages %}    
+        <div class="msg">
+            <div role="alert" id="alert" class="alert alert-success bg-green-600 bg-opacity-30 mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" id="closebtn" class="stroke-current shrink-0 h-10 w-10" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>{{message}}</span>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+    <!-- <h1 class="text-xl text-center font-bold text-gray-800 capitalize mt-2 mr-2">Search <i class="fas fa-search"></i></h1> -->
+    <form id="feedbackForm" method="POST">
+        {% csrf_token%}
+            <div class="relative w-full my-4">
+                <input type="text" placeholder="Search" class="rounded-md px-3 py-2 text-sm font-medium w-full max-w-xs mr-1 border-b-2 border-gray-800" name="search"/>
+                <button id="feedbackBtn" class="py-2 text-gray-900 items-center text-2xl font-bold outline-none focus:outline-none transition-transform duration-300 transform hover:scale-[1.03]" type="submit" style="transition: all 0.15s ease 0s;">
+                    <span class="inline-block transform hover:scale-[1.03]">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </button>
+            </div>
+    </form>
+    <br>
+    <div class="grid grid-cols-3 gap-3">
+        <!-- First col section -->
+        <div class="p-4 col-span-2">
+            <div>Results</div><br>
+            <div>
+                {% if results %}
+                    {% for result in results %}
+                        <div class="flex max-w-sm items-center border-2 border-gray-300 rounded-lg">
+                            <div class="mx-5 my-3">
+                                {% if result.userprofile.Profileimage %}
+                                    <div class="avatar">
+                                        <div class="w-14 h-14 rounded-full ring ring-gray-800 ring-offset-base-100 ring-offset-2">
+                                        <img src="{{result.userprofile.Profileimage.url}}" />
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="avatar">
+                                        <div class="w-14 h-14 rounded-full ring ring-gray-800 ring-offset-base-100 ring-offset-2">
+                                            <figure ><svg fill="#000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                width="56px" height="56px" viewBox="0 0 45.532 45.532"
+                                                xml:space="preserve">
+                                        <g>
+                                            <path d="M22.766,0.001C10.194,0.001,0,10.193,0,22.766s10.193,22.765,22.766,22.765c12.574,0,22.766-10.192,22.766-22.765
+                                                S35.34,0.001,22.766,0.001z M22.766,6.808c4.16,0,7.531,3.372,7.531,7.53c0,4.159-3.371,7.53-7.531,7.53
+                                                c-4.158,0-7.529-3.371-7.529-7.53C15.237,10.18,18.608,6.808,22.766,6.808z M22.761,39.579c-4.149,0-7.949-1.511-10.88-4.012
+                                                c-0.714-0.609-1.126-1.502-1.126-2.439c0-4.217,3.413-7.592,7.631-7.592h8.762c4.219,0,7.619,3.375,7.619,7.592
+                                                c0,0.938-0.41,1.829-1.125,2.438C30.712,38.068,26.911,39.579,22.761,39.579z"/>
+                                        </g>
+                                        </svg></figure>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="">
+                                <div class="text-left items-baseline text-lg font-bold text-gray-800 capitalize" >{{result.userprofile.user.username}}</div>
+                                <div class="grid grid-cols-3 gap-4">
+                                    <a href="#" class="transition-transform duration-300 transform hover:scale-105">
+                                        <div class="items-center text-center transform hover:scale-105">
+                                            <div>Following</div>
+                                            <div class="-mt-1">{{result.userprofile.follows.all.count}}</div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="transition-transform duration-300 transform hover:scale-105">
+                                        <div class="items-center text-center transform hover:scale-105">
+                                            <div>Followers</div>
+                                            <div class="-mt-1">{{result.userprofile.followed_by.all.count}}</div>
+                                        </div>
+                                    </a>
+                                    <a href="{{result.userprofile.user.username}}" class="flex justify-center bg-gray-900 text-white items-center mx-auto hover:bg-gray-800  font-bold lowercase px-2 py-[1px] rounded shadow hover:shadow-lg outline-none focus:outline-none transition-transform duration-300 transform hover:scale-105">
+                                        Profile
+                                    </a>    
+                                </div>
+                            </div>
+                        </div><br>
+                    {% endfor %}
+                {% else %}
+                        {% if results == None %}
+                        {% else %}
+                            Sorry, no user was found
+                        {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <!-- End of first col section -->
+        <!-- Second col section -->
+        <div class="p-4 text-center">
+            <br><br>
+            second
+        </div>
+    </div>
+    <script>
+        let erroralertbtn= document.getElementById('closebtn');
+        let alert= document.getElementById('alert');
+        const erroralertbtnt= document.getElementById('closebtnerror');
+        const alertt= document.getElementById('alerterror');
+        
+        if (erroralertbtn != null){
+            erroralertbtn.addEventListener('click', () => {
+                if(alert.classList.contains('hidden')){
+                    alert.classList.remove('hidden');
+                }else{
+                    alert.classList.add('hidden');
+                }
+            });
+        }
+        if (erroralertbtnt != null){
+            erroralertbtnt.addEventListener('click', () => {
+                if(alertt.classList.contains('hidden')){
+                    alertt.classList.remove('hidden');
+                }else{
+                    alertt.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+
+{% endblock %}
